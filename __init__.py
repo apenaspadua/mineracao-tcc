@@ -1,8 +1,16 @@
 from selenium import webdriver
 import pymysql
+import re
 
 # inicializando MySQL
 db = pymysql.connect("localhost", "root", "endgame123", "base_tcc")
+
+
+def formatString(dataItem):
+    data = dataItem[7:-1]
+    replaceData = data.replace(",", "")
+    formatData = replaceData.replace("'", "")
+    return formatData
 
 
 def postToDatabase(id, item):
@@ -22,13 +30,13 @@ def main():
     drugList = chrome.find_element_by_id("lista")
     items = drugList.find_elements_by_tag_name("li")
 
-    id = 0
-
     for item in items:
-        drug = item.text
-        id += 1
-        print(id, drug)
-        postToDatabase(id, drug)
+        data = item.get_attribute("onclick")
+        id_item = formatString(data)
+        id = int(re.search(r'\d+', id_item).group(0))
+        item = " ".join(re.findall("[a-zA-Z-ã-é-â-ê-Á-í-ó]+", id_item))
+        postToDatabase(id, item)
+        print(id, item)
 
 
 main()
