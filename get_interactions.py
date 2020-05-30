@@ -1,5 +1,6 @@
 from selenium import webdriver
 import pymysql
+from selenium.webdriver import ActionChains
 
 # inicializando MySQL
 db = pymysql.connect("localhost", "root", "endgame123", "base_tcc")
@@ -8,12 +9,6 @@ db = pymysql.connect("localhost", "root", "endgame123", "base_tcc")
 def postToDatabase(id, item):
     cursor = db.cursor()
 
-    sql = "INSERT INTO medicamentos (id, nome_descricao) VALUES (%s, %s)"
-    cursor.connection.ping()
-    with cursor.connection as cursor:
-        cursor.execute(sql, (int(id), item))
-    db.close()
-
 
 def main():
     chrome = webdriver.Chrome()
@@ -21,14 +16,16 @@ def main():
 
     drugList = chrome.find_element_by_id("lista")
     items = drugList.find_elements_by_tag_name("li")
+    botao = chrome.find_element_by_id("botao")
 
-    id = 0
+    cont = 0
 
     for item in items:
-        drug = item.text
-        id += 1
-        print(id, drug)
-        postToDatabase(id, drug)
+        cont += 1
+        if cont <= 2:
+            ActionChains(chrome).click(item).perform()
+        else:
+            ActionChains(chrome).click(botao).perform()
 
 
 main()
