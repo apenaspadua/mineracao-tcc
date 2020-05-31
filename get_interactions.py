@@ -2,9 +2,7 @@ from selenium import webdriver
 import pymysql
 from selenium.webdriver import ActionChains
 from random import randint
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
+import time
 
 # inicializando MySQL
 db = pymysql.connect("localhost", "root", "endgame123", "base_tcc")
@@ -30,19 +28,9 @@ def main():
             ActionChains(chrome).click(items[index]).perform()
         else:
             chrome.execute_script('getDados()')
-            element_present = EC.presence_of_element_located((By.ID, 'resultado'))
-            WebDriverWait(chrome, 60).until(element_present)
-
-            print(element_present)
-
-            # chrome.execute_script("arguments[0].click();", WebDriverWait(chrome, 60).until(
-            #     EC.element_to_be_clickable((
-            #         By.CSS_SELECTOR, "#botao"))
-            # ))
-            # elem = chrome.find_element_by_xpath("//*")
-            # source_code = elem.get_attribute("innerHTML")
-            #
-            # print(source_code)
+            time.sleep(3)
+            element = chrome.find_element_by_id('resultado')
+            print(element.text)
 
 
 main()
