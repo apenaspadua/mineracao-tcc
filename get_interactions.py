@@ -30,7 +30,10 @@ def main():
             chrome.execute_script('getDados()')
             time.sleep(3)
             element = chrome.find_element_by_id('resultado')
-            print(element.text)
+            print(element.text + '\n')
+            back = chrome.find_element_by_id('voltar')
+            ActionChains(chrome).click(back).perform()
+            cont = 0
 
 
 main()
