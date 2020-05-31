@@ -20,7 +20,6 @@ def main():
 
     drugList = chrome.find_element_by_id("lista")
     items = drugList.find_elements_by_tag_name("li")
-    button = chrome.find_element_by_id("botao")
 
     cont = 0
 
@@ -30,11 +29,20 @@ def main():
         if cont <= 2:
             ActionChains(chrome).click(items[index]).perform()
         else:
-            cont = 0
-            # ActionChains(chrome).click(button).perform()
+            chrome.execute_script('getDados()')
+            element_present = EC.presence_of_element_located((By.ID, 'resultado'))
+            WebDriverWait(chrome, 60).until(element_present)
 
-            # window_after = chrome.window_handles[0]
-            # chrome.switch_to.window(window_after)
+            print(element_present)
+
+            # chrome.execute_script("arguments[0].click();", WebDriverWait(chrome, 60).until(
+            #     EC.element_to_be_clickable((
+            #         By.CSS_SELECTOR, "#botao"))
+            # ))
+            # elem = chrome.find_element_by_xpath("//*")
+            # source_code = elem.get_attribute("innerHTML")
+            #
+            # print(source_code)
 
 
 main()
