@@ -1,14 +1,12 @@
-from selenium import webdriver
-import pymysql
-from selenium.webdriver import ActionChains
-from random import randint
-import time
 import re
+import time
+from random import randint
+
+import mysql.connector
+from selenium import webdriver
+from selenium.webdriver import ActionChains
 
 from Scripts.DatabaseModel import DatabaseModel
-
-# inicializando MySQL
-db = pymysql.connect("localhost", "root", "endgame123", "base_tcc")
 
 # instancia do modelo
 databaseModel = DatabaseModel()
@@ -79,30 +77,39 @@ def backToList():
 
 
 def postToDatabase(databaseModel):
-    cursor = db.cursor()
-    sql = """INSERT INTO interacoes_medicamentos (id, id_primeiro_medicamento, id_segundo_medicamento, nome_primeiro_medicamento, nome_segundo_medicamento, gravidade_interacao, inicio_interacao, prop_ocorrencia, efeito, mecanismo, sujestao_conduta)
-          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-    recordTuple = ((databaseModel.getId,
-                    databaseModel.getIdPriMed,
-                    databaseModel.getIdSegMed,
-                    databaseModel.getNomePriMed,
-                    databaseModel.getNomeSegMed,
-                    databaseModel.getGravidade,
-                    databaseModel.getInicio,
-                    databaseModel.getProb,
-                    databaseModel.getEfeito,
-                    databaseModel.getMecanismo,
-                    databaseModel.getSujestao))
-    cursor.execute(sql, recordTuple)
-    db.commit()
-    print("Record inserted successfully!\n")
+    global connection, cursor
+    try:
+        connection = mysql.connector.connect(host="localhost", database="base_tcc", user="root", password="endgame123")
+        cursor = connection.cursor()
+        sql = """INSERT INTO interacoes_medicamentos (id, id_primeiro_medicamento, id_segundo_medicamento, nome_primeiro_medicamento, nome_segundo_medicamento, gravidade_interacao, inicio_interacao, prop_ocorrencia, efeito, mecanismo, sujestao_conduta)
+              VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+        recordTuple = ((databaseModel.getId,
+                        databaseModel.getIdPriMed,
+                        databaseModel.getIdSegMed,
+                        databaseModel.getNomePriMed,
+                        databaseModel.getNomeSegMed,
+                        databaseModel.getGravidade,
+                        databaseModel.getInicio,
+                        databaseModel.getProb,
+                        databaseModel.getEfeito,
+                        databaseModel.getMecanismo,
+                        databaseModel.getSujestao))
+        cursor.execute(sql, recordTuple)
+        connection.commit()
+        print("-------------------------------")
+        print("Record inserted successfully!")
+        print("-------------------------------\n")
 
+    except mysql.connector.Error as error:
+        print("-------------------------------")
+        print("Failed to insert record into {}".format(error))
+        print("-------------------------------\n")
 
-    # cursor.connection.ping()
-    # with cursor.connection as cursor:
-    #     cursor.execute(sql,
-    #     db.close()
-    #     print("deu certo")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            print("MySQL connection is closed\n")
 
 
 def main():
