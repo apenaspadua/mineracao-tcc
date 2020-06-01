@@ -16,6 +16,7 @@ chrome = webdriver.Chrome()
 chrome.get('https://interacoesmedicamentosas.com.br/interacoes.php')
 
 
+# formatando a string
 def formatString(dataItem):
     data = dataItem[7:-1]
     replaceData = data.replace(",", "")
@@ -23,6 +24,7 @@ def formatString(dataItem):
     return formatData
 
 
+# desestruturando a string response do servidor
 def destroyString(response):
     interacao = response[:3]
     lista = []
@@ -42,6 +44,7 @@ def destroyString(response):
         print("Sem interacao\n")
 
 
+# atribuindo os valores para os atributos
 def prepareToPost(item, identify):
     if identify == 0:
         databaseModel.nomePriMed = item.replace('\n', '')
@@ -71,11 +74,13 @@ def prepareToPost(item, identify):
         databaseModel.sujestao = item[21:-1]
 
 
+# clicar no botao pra voltar
 def backToList():
     back = chrome.find_element_by_id('voltar')
     ActionChains(chrome).click(back).perform()
 
 
+# post no banco de dados
 def postToDatabase(databaseModel):
     global connection, cursor
     try:
