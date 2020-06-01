@@ -35,7 +35,7 @@ def main():
         id_item = formatString(data)
         id = int(re.search(r'\d+', id_item).group(0))
         item = " ".join(re.findall("[a-zA-Z-ã-é-â-ê-Á-í-ó]+", id_item))
-        postToDatabase(id, item)
+        # postToDatabase(id, item)
         print(id, item)
 
 
